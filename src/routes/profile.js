@@ -26,6 +26,19 @@ const upload = multer({
 
 router.get("/profile", getProfile);
 router.put("/profile", updateProfile);
-router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
+router.post("/upload-avatar", (req, res, next) => {
+  upload.single("avatar")(
+    req,
+    res,
+    (err) => {
+      if (err) {
+        console.error("Upload error:", err);
+        return res.status(400).json({ error: err.message });
+      }
+      next();
+    },
+    uploadAvatar
+  );
+});
 
 module.exports = router;
